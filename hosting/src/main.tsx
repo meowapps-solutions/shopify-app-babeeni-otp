@@ -5,8 +5,6 @@ import '@shopify/polaris/build/esm/styles.css';
 
 import enPolarisTranslations from '@shopify/polaris/locales/en.json';
 
-import { AppNavMenu } from './components/nav-menu';
-
 import Index from './index';
 import NotFound from './404';
 import AppLayout from './app/_layout';
@@ -27,13 +25,6 @@ createRoot(document.getElementById('root')!).render(
 
         <Route path='*' element={<NotFound />} />
       </Routes>
-
-      <AppNavMenu
-        tabs={[
-          { content: 'Home', url: '/app' },
-          { content: 'Additional page', url: '/app/additional' },
-        ]}
-      />
     </BrowserRouter>
   </PolarisAppProvider>,
 );

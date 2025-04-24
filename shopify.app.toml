@@ -1,9 +1,9 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "345807df431aedc80af38c5c45ef2ecb"
-name = "My Awesome App"
-handle = "my-awesome-app-155"
-application_url = "https://my-awesome-project-e66af.web.app/app/"
+client_id = "60370387e07d5f564cfca1e529047bff"
+name = "babeeni: Verify Service"
+handle = "babeeni-otp-app"
+application_url = "https://involved-bullet-intellectual-logical.trycloudflare.com/app/"
 embedded = true
 
 [build]
@@ -15,7 +15,7 @@ scopes = "read_products,write_products"
 
 [auth]
 redirect_urls = [
-  "https://my-awesome-project-e66af.web.app/api/auth/callback/"
+  "https://involved-bullet-intellectual-logical.trycloudflare.com/api/auth/callback/"
 ]
 
 [webhooks]
@@ -23,7 +23,7 @@ api_version = "2025-01"
 
 [[webhooks.subscriptions]]
 topics = ["app/uninstalled"]
-uri = "https://my-awesome-project-e66af.web.app/api/webhooks/"
+uri = "https://involved-bullet-intellectual-logical.trycloudflare.com/api/webhooks/"
 
 [pos]
 embedded = false

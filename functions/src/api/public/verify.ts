@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import * as core from 'express-serve-static-core';
 import twilio from 'twilio';
 import {
@@ -5,6 +6,55 @@ import {
   TWILIO_AUTH_TOKEN,
   TWILIO_SERVICE_ID,
 } from '../../../shopify.app.json';
+import {db} from '../../firebase.server';
+
+const VERIFICATION_COOLDOWN_SECONDS = 60; // e.g., 60 seconds
+
+export const verifyStorage = {
+  collection: db.collection('shopify-verify'),
+  canAttempt: async (phoneNumber: string): Promise<boolean> => {
+    try {
+      const docRef = verifyStorage.collection.doc(phoneNumber);
+      const docSnap = await docRef.get();
+
+      if (!docSnap.exists) {
+        // No previous attempt recorded, allow it.
+        return true;
+      }
+
+      const data = docSnap.data();
+      if (!data?.lastAttemptTimestamp) {
+        console.warn(`Firestore document ${phoneNumber} missing lastAttemptTimestamp.`);
+        return true;
+      }
+
+      const lastAttempt = data.lastAttemptTimestamp.toDate();
+      const now = new Date();
+      const secondsSinceLastAttempt = (now.getTime() - lastAttempt.getTime()) / 1000;
+
+      return secondsSinceLastAttempt >= VERIFICATION_COOLDOWN_SECONDS;
+    } catch (error) {
+      console.error(`Error checking verification attempt for ${phoneNumber}:`, error);
+      return true;
+    }
+  },
+  store: async (phoneNumber: string): Promise<void> => {
+    try {
+      const docRef = verifyStorage.collection.doc(phoneNumber);
+      await docRef.set(
+        {
+          phoneNumber: phoneNumber, // Store phone number for potential queries
+          lastAttemptTimestamp: Date.now(), // Use Firestore Timestamp
+        },
+        {merge: true} // Use merge: true to create or update
+      );
+      console.log(`Stored verification attempt for ${phoneNumber}`);
+    } catch (error) {
+      console.error(`Error storing verification attempt for ${phoneNumber}:`, error);
+      // Log the error, but don't throw, as the SMS might have already been sent.
+    }
+  },
+};
 
 const accountSid = TWILIO_ACCOUNT_SID;
 const authToken = TWILIO_AUTH_TOKEN;
@@ -24,6 +74,17 @@ export default (app: core.Express) => {
     }
 
     try {
+      // *** Spam Prevention Check ***
+      const allowed = await verifyStorage.canAttempt(phoneNumber);
+      if (!allowed) {
+        console.log(`Verification attempt blocked for ${phoneNumber} due to cooldown.`);
+        res.status(429).json({ // 429 Too Many Requests
+          success: false,
+          message: `Too many verification requests. Please wait ${VERIFICATION_COOLDOWN_SECONDS} seconds before trying again.`,
+        });
+        return;
+      }
+
       const verification = await client.verify.v2
         .services(serviceId)
         .verifications.create({
@@ -31,6 +92,8 @@ export default (app: core.Express) => {
           to: phoneNumber,
         });
       console.log(verification);
+
+      await verifyStorage.store(phoneNumber);
 
       res.status(200).json({
         success: true,

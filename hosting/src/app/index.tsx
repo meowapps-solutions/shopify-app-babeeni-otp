@@ -106,6 +106,16 @@ export default function App() {
   "message": "Error sending verification code"
 }`}
                 </CodeBlock>
+                
+                <Text as="p">
+                  <strong>Error (429 Too Many Requests):</strong>
+                </Text>
+                <CodeBlock>
+                  {`{
+  "success": false,
+  "message": "Too many verification requests. Please wait 60 seconds before trying again."
+}`}
+                </CodeBlock>
               </BlockStack>
             </Card>
           </BlockStack>

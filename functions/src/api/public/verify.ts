@@ -28,9 +28,7 @@ export const verifyStorage = {
         return true;
       }
 
-      const lastAttempt = data.lastAttemptTimestamp.toDate();
-      const now = new Date();
-      const secondsSinceLastAttempt = (now.getTime() - lastAttempt.getTime()) / 1000;
+      const secondsSinceLastAttempt = (Date.now() - data.lastAttemptTimestamp) / 1000;
 
       return secondsSinceLastAttempt >= VERIFICATION_COOLDOWN_SECONDS;
     } catch (error) {

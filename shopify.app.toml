@@ -3,7 +3,7 @@
 client_id = "60370387e07d5f564cfca1e529047bff"
 name = "babeeni: Verify Service"
 handle = "babeeni-otp-app"
-application_url = "https://involved-bullet-intellectual-logical.trycloudflare.com/app/"
+application_url = "https://twilio-b5a9c.web.app/app/"
 embedded = true
 
 [build]
@@ -15,7 +15,7 @@ scopes = "read_products,write_products"
 
 [auth]
 redirect_urls = [
-  "https://involved-bullet-intellectual-logical.trycloudflare.com/api/auth/callback/"
+  "https://twilio-b5a9c.web.app/api/auth/callback/"
 ]
 
 [webhooks]
@@ -23,7 +23,7 @@ api_version = "2025-01"
 
 [[webhooks.subscriptions]]
 topics = ["app/uninstalled"]
-uri = "https://involved-bullet-intellectual-logical.trycloudflare.com/api/webhooks/"
+uri = "https://twilio-b5a9c.web.app/api/webhooks/"
 
 [pos]
 embedded = false

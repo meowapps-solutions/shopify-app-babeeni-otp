@@ -18,6 +18,11 @@ redirect_urls = [
   "https://twilio-b5a9c.web.app/api/auth/callback/"
 ]
 
+[app_proxy]
+url = "https://twilio-b5a9c.web.app/api/public/"
+subpath = "babeeni-otp-app"
+prefix = "apps"
+
 [webhooks]
 api_version = "2025-01"
 

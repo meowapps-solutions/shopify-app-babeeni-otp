@@ -98,6 +98,12 @@ export default (app: core.Express) => {
         message: 'Verification code sent',
       });
     } catch (error) {
+      if ((error as {code: number}).code === 60410) {
+        res.status(400).json({
+          success: false,
+          message: 'Verification delivery attempt blocked',
+        });
+      }
       console.error('Error sending verification code:', error);
       res.status(400).json({
         success: false,
